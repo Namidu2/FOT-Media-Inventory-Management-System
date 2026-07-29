@@ -1,1 +1,77 @@
-<p>sidebar works!</p>
+<div class="sidebar">
+    <!-- Logo Section -->
+    <div class="sidebar-logo">
+        <div class="logo-icon">
+            <img src="/FOT-LOGO_PNG_Black .png" alt="">
+        </div>
+        <div class="logo-text">
+            <span class="logo-title">FOT Media </span>
+            <span class="logo-subtitle">Inventory System</span>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="sidebar-nav">
+        <ul>
+            <li>
+                <a routerLink="/dashboard" routerLinkActive="active">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a routerLink="/inventory" routerLinkActive="active">
+                    <i class="fas fa-box-open"></i>
+                    <span>Inventory</span>
+                </a>
+            </li>
+            <li>
+                <a routerLink="/issue" routerLinkActive="active">
+                    <i class="fas fa-arrow-up-right-from-square"></i>
+                    <span>Issue Items</span>
+                </a>
+            </li>
+            <li>
+                <a routerLink="/return" routerLinkActive="active">
+                    <i class="fas fa-rotate-left"></i>
+                    <span>Return Items</span>
+                </a>
+            </li>
+            <li>
+                <a routerLink="/users" routerLinkActive="active">
+                    <i class="fas fa-users"></i>
+                    <span>Users</span>
+                </a>
+            </li>
+            <li>
+                <a routerLink="/categories" routerLinkActive="active">
+                    <i class="fas fa-layer-group"></i>
+                    <span>Categories</span>
+                </a>
+            </li>
+            <li>
+                <a routerLink="/reports" routerLinkActive="active">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reports</span>
+                </a>
+            </li>
+            <li>
+                <a routerLink="/settings" routerLinkActive="active">
+                    <i class="fas fa-gear"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Bottom Section -->
+    <div class="sidebar-bottom">
+        <a class="logout-link" href="#">
+            <i class="fas fa-right-from-bracket"></i>
+            <span>Logout</span>
+        </a>
+        <div class="sidebar-version">
+            Faculty of Technology · v1.0
+        </div>
+    </div>
+</div>

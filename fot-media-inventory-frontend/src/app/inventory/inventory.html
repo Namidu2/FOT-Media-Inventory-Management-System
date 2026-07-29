@@ -1,0 +1,145 @@
+<div class="inventory-container">
+    <div class="header">
+        <div>
+            <h1>Inventory Management</h1>
+            <p>Manage all media equipment in the FOT Media Unit.</p>
+        </div>
+        <button>
+            + Add Equipment
+        </button>
+    </div>
+
+    
+
+    <div class="filters">
+        <input 
+        type="text"
+        placeholder="Search Equipment...."
+        [(ngModel)] = "searchText">
+
+        <select [(ngModel)]="selectedCategory">
+            <option *ngFor="let category of categories">
+
+                {{category}}
+
+            </option>
+        </select>
+
+        <select [(ngModel)]="selectedStatus">
+
+            <option 
+            *ngFor="let status of statuses">
+
+            {{status}}
+
+            </option>
+
+        </select>
+    </div>
+    
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>Photo</th>
+                <th>Item</th>
+                <th>Category</th>
+                <th>Serial No.</th>
+                <th>Condition</th>
+                <th>Status</th>
+                <th>Actions</th>
+
+            </tr>
+
+        </thead>
+
+
+
+        <tbody>
+
+
+            <tr *ngFor="let item of filteredEquipment">
+
+
+                <td>
+
+                    <img 
+                        [src]="item.image"
+                        class="item-image">
+
+                </td>
+
+
+
+                <td>
+
+                    <strong>
+                    {{item.name}}
+                    </strong>
+
+                </td>
+
+
+
+                <td>
+                    {{item.category}}
+                </td>
+
+
+
+                <td>
+                    {{item.serialNo}}
+                </td>
+
+
+
+                <td>
+                    {{item.condition}}
+                </td>
+
+
+
+                <td>
+
+                    <span 
+                        class="status"
+                        [ngClass]="item.status.toLowerCase()">
+
+                        {{item.status}}
+
+                    </span>
+
+
+                </td>
+
+
+
+                <td>
+
+                    <span class="material-symbols-outlined">
+                        visibility
+                    </span>
+
+                    <span class="material-symbols-outlined">
+                        edit
+                    </span>
+
+                    <span class="material-symbols-outlined">
+                        delete
+                    </span>
+
+
+                </td>
+
+
+
+            </tr>
+
+
+        </tbody>
+
+
+</table>
+</div>

@@ -1,1 +1,80 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+        <h1 class="welcome-title">Welcome back, {{ userName }}</h1>
+        <p class="welcome-subtitle">Here's an overview of the FOT Media Unit inventory.</p>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-info">
+                    <h3 class="card-label">Total Inventory Items</h3>
+                    <h2 class="card-value">{{ totalInventoryItems }}</h2>
+                    <span class="card-change positive">+4 this month</span>
+                </div>
+                <div class="card-icon icon-teal">
+                    <i class="fas fa-boxes-stacked"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-info">
+                    <h3 class="card-label">Issued Items</h3>
+                    <h2 class="card-value">{{ issuedItems }}</h2>
+                </div>
+                <div class="card-icon icon-blue">
+                    <i class="fas fa-arrow-up-right-from-square"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-info">
+                    <h3 class="card-label">Damaged Items</h3>
+                    <h2 class="card-value">{{ damagedItems }}</h2>
+                </div>
+                <div class="card-icon icon-orange">
+                    <i class="fas fa-triangle-exclamation"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-info">
+                    <h3 class="card-label">Users</h3>
+                    <h2 class="card-value">{{ users }}</h2>
+                </div>
+                <div class="card-icon icon-purple">
+                    <i class="fas fa-user-group"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Issue Activity -->
+    <div class="activity-section">
+        <h2 class="section-title">Recent Issue Activity</h2>
+
+        <div class="activity-list">
+            @for (item of recentActivity; track item.id) {
+                <div class="activity-item">
+                    <div class="activity-info">
+                        <h4 class="activity-name">{{ item.name }}</h4>
+                        <p class="activity-details">
+                            {{ item.issueId }} · {{ item.itemCount }} item(s) · Issued by {{ item.issuedBy }}
+                        </p>
+                    </div>
+                    <span class="status-badge" [class]="'status-' + item.status.toLowerCase()">
+                        {{ item.status }}
+                    </span>
+                </div>
+            }
+        </div>
+    </div>
+</div>

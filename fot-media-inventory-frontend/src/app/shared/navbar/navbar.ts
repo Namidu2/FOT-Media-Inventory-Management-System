@@ -1,9 +1,28 @@
 import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-navbar',
-  imports: [],
+  standalone: true,
+  imports: [FormsModule],
   templateUrl: './navbar.html',
-  styleUrl: './navbar.css',
+  styleUrl: './navbar.css'
 })
-export class Navbar {}
+export class Navbar {
+
+  searchText = '';
+  userName = 'Kasun Perera';
+  userRole = 'President';
+
+  get userInitials(): string {
+    return this.userName
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase();
+  }
+
+  search() {
+    console.log(this.searchText);
+  }
+}
