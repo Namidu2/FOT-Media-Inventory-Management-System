@@ -4,7 +4,7 @@
             <h1>Inventory Management</h1>
             <p>Manage all media equipment in the FOT Media Unit.</p>
         </div>
-        <button>
+        <button class="add-btn"  (click)="openAddModel()" >
             + Add Equipment
         </button>
     </div>
@@ -17,24 +17,37 @@
         placeholder="Search Equipment...."
         [(ngModel)] = "searchText">
 
-        <select [(ngModel)]="selectedCategory">
-            <option *ngFor="let category of categories">
+        <div class="custom-dropdown" (click)="isCategoryDropdownOpen = !isCategoryDropdownOpen" [class.dropdown-open]="isCategoryDropdownOpen">
+            <div class="dropdown-header">
+                {{selectedCategory}}
+                <span class="material-symbols-outlined">expand_more</span>
+            </div>
+            <div class="dropdown-list" *ngIf="isCategoryDropdownOpen">
+                <div class="dropdown-item" 
+                     *ngFor="let category of categories"
+                     (click)="selectCategory(category); $event.stopPropagation()"
+                     [class.active]="selectedCategory === category">
+                    {{category}}
+                    <span class="material-symbols-outlined check-icon" *ngIf="selectedCategory === category">check</span>
+                </div>
+            </div>
+        </div>
 
-                {{category}}
-
-            </option>
-        </select>
-
-        <select [(ngModel)]="selectedStatus">
-
-            <option 
-            *ngFor="let status of statuses">
-
-            {{status}}
-
-            </option>
-
-        </select>
+        <div class="custom-dropdown" (click)="isStatusDropdownOpen = !isStatusDropdownOpen" [class.dropdown-open]="isStatusDropdownOpen">
+            <div class="dropdown-header">
+                {{selectedStatus}}
+                <span class="material-symbols-outlined">expand_more</span>
+            </div>
+            <div class="dropdown-list" *ngIf="isStatusDropdownOpen">
+                <div class="dropdown-item" 
+                     *ngFor="let status of statuses"
+                     (click)="selectStatus(status); $event.stopPropagation()"
+                     [class.active]="selectedStatus === status">
+                    {{status}}
+                    <span class="material-symbols-outlined check-icon" *ngIf="selectedStatus === status">check</span>
+                </div>
+            </div>
+        </div>
     </div>
     
     <table>
@@ -42,14 +55,12 @@
         <thead>
 
             <tr>
-
-                <th>Photo</th>
+                <th class="checkbox-col"><input type="checkbox"></th>
                 <th>Item</th>
                 <th>Category</th>
                 <th>Serial No.</th>
                 <th>Condition</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th class="actions-header">Actions</th>
 
             </tr>
 
@@ -62,26 +73,19 @@
 
             <tr *ngFor="let item of filteredEquipment">
 
+                <td class="checkbox-col">
+                    <input type="checkbox">
+                </td>
 
-                <td>
-
+                <td class="item-cell">
                     <img 
                         [src]="item.image"
                         class="item-image">
-
+                    <div class="item-info">
+                        <strong>{{item.name}}</strong>
+                        <span class="item-meta">INV-100{{item.id}} &middot; {{item.category}}</span>
+                    </div>
                 </td>
-
-
-
-                <td>
-
-                    <strong>
-                    {{item.name}}
-                    </strong>
-
-                </td>
-
-
 
                 <td>
                     {{item.category}}
@@ -96,40 +100,36 @@
 
 
                 <td>
-                    {{item.condition}}
+                    <span class="condition-badge" [ngClass]="item.condition.toLowerCase()">
+                        {{item.condition}}
+                    </span>
                 </td>
 
 
 
-                <td>
-
-                    <span 
-                        class="status"
-                        [ngClass]="item.status.toLowerCase()">
-
-                        {{item.status}}
-
-                    </span>
-
-
-                </td>
+                
 
 
 
-                <td>
+                <td class="actions">
 
-                    <span class="material-symbols-outlined">
-                        visibility
-                    </span>
+                    <button class="action-btn view-btn" title="View" (click)="viewItem(item)">
+                        <span class="material-symbols-outlined">
+                            visibility
+                        </span>
+                    </button>
 
-                    <span class="material-symbols-outlined">
-                        edit
-                    </span>
+                    <button class="action-btn edit-btn" title="Edit" (click)="editItem(item)">
+                        <span class="material-symbols-outlined">
+                          edit
+                        </span>
+                    </button>
 
-                    <span class="material-symbols-outlined">
-                        delete
-                    </span>
-
+                    <button class="action-btn delete-btn" title="Delete" (click)="deleteItem(item)">
+                        <span class="material-symbols-outlined">
+                            delete
+                        </span>
+                    </button>
 
                 </td>
 
@@ -141,5 +141,103 @@
         </tbody>
 
 
-</table>
+    </table>
+
+    <div class="modal-backdrop" *ngIf="showAddModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div>
+                    <h2>Add New Equipment</h2>
+                    <p>Fill in the equipment details. Fields marked * are required.</p>
+                </div>
+                <button type="button" class="close-btn" (click)="closeAddModel()">
+                    <span class="material-symbols-outlined">
+                        close
+                    </span>
+                </button>
+            </div>
+
+            <form [formGroup]="equipmentForm" (ngSubmit)="onSubmit()">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Item ID</label>
+                        <input type="text" formControlName="itemId" class="form-control" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Equipment Name <span class="text-danger">*</span></label>
+                        <input type="text" formControlName="equipmentName" class="form-control"
+                            [class.is-invalid]="equipmentForm.get('equipmentName')?.invalid && equipmentForm.get('equipmentName')?.touched">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select formControlName="category" class="form-control">
+                            <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Brand</label>
+                        <input type="text" formControlName="brand" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Model</label>
+                        <input type="text" formControlName="model" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Serial Number <span class="text-danger">*</span></label>
+                        <input type="text" formControlName="serialNumber" class="form-control"
+                            [class.is-invalid]="equipmentForm.get('serialNumber')?.invalid && equipmentForm.get('serialNumber')?.touched">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Condition</label>
+                        <select formControlName="condition" class="form-control">
+                            <option value="Excellent">Excellent</option>
+                            <option value="Good">Good</option>
+                            <option value="Fair">Fair</option>
+                            <option value="Poor">Poor</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select formControlName="status" class="form-control">
+                            <option *ngFor="let stat of statuses" [value]="stat">{{ stat }}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width mt-3">
+                        <label>Notes</label>
+                        <textarea formControlName="notes" class="form-control" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group full-width mt-3">
+                        <label>Equipment Image</label>
+                        <div class="upload-area">
+                            <div class="image-thumbnail" *ngIf="imagePreview">
+                                <img [src]="imagePreview" alt="Preview">
+                            </div>
+                            <div class="image-thumbnail placeholder" *ngIf="!imagePreview"></div>
+                            <div class="upload-box" (click)="fileInput.click()">
+                                <input type="file" #fileInput (change)="onFileChange($event)" accept="image/*" hidden>
+                                <span class="material-symbols-outlined">
+                                    upload
+                                </span>
+                                <span>Click to upload image</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" (click)="closeAddModel()">Cancel</button>
+                    <button type="submit" class="btn-submit">Add Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
