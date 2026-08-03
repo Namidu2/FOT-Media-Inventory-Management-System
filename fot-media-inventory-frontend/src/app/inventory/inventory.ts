@@ -19,10 +19,26 @@ export class Inventory {
 
   isCategoryDropdownOpen = false;
   isStatusDropdownOpen = false;
+  
 
   selectedCategory = 'All Categories';
-
   selectedStatus = 'All Status';
+
+  showViewModal = false;
+  selectedItem: any = null;
+
+  isEditModalOpen = false;
+  openEditModal(item: any) {
+    this.selectedItem = {...item};
+    this.isEditModalOpen = true;
+  }
+
+  closeEditModal() {
+    this.isEditModalOpen = false;
+    this.selectedItem = null;
+  } 
+  
+
 
   categories = [
     'All Categories',
@@ -61,23 +77,31 @@ export class Inventory {
 
  {
   id:1,
+  itemId:'INV-1001',
   image:'assets/images/camera.jpg',
   name:'Sony A7RV Camera',
   category:'Cameras',
+  brand:'Sony',
+  model:'A7RV',
   serialNo:'CAM-001',
   condition:'Excellent',
-  status:'Available'
+  status:'Available',
+  notes:'Full-frame mirrorless camera with 61MP sensor.'
  },
 
 
  {
   id:2,
+  itemId:'INV-1002',
   image:'assets/images/drone.jpg',
   name:'DJI Mavic Air 3',
   category:'Drones',
+  brand:'DJI',
+  model:'Mavic Air 3',
   serialNo:'DRN-002',
   condition:'Good',
-  status:'Issued'
+  status:'Issued',
+  notes:'Compact consumer drone with 4K video support.'
  },
 
 
@@ -86,12 +110,10 @@ export class Inventory {
  ];
 
 
- viewItem(item: any) {
-   console.log('View:', item);
- }
+ 
 
  editItem(item: any) {
-   console.log('Edit:', item);
+   this.openEditModal(item);
  }
 
  deleteItem(item: any) {
@@ -139,20 +161,21 @@ export class Inventory {
 
   openAddModel(){
     
+    if(!this.equipmentForm){
+      this.ngOnInit();
+    }
     this.showAddModal = true;
 
   } 
   
   closeAddModel(){
     this.showAddModal = false;
-    if (this.equipmentForm) {
-      this.equipmentForm.reset({
-        itemId: 'INV-1013', 
-        category: 'Cameras',
-        condition: 'Good',
-        status: 'Available'
-      });
-    }
+    this.equipmentForm.reset({
+      itemId:'INV-1013',
+      category:'Cameras',
+      condition:'Good',
+      status:'Available'
+    });
     this.imagePreview = null;
   }
 
@@ -176,7 +199,7 @@ export class Inventory {
 
   ngOnInit(): void{
     this.equipmentForm = this.fb.group({
-      itemId: [{ value: 'INV-1013', disabled: true }],
+      itemId: ['INV-1013'],
       equipmentName: ['', Validators.required],
       category: ['Cameras'],
       brand: [''],
@@ -196,12 +219,16 @@ export class Inventory {
       
       const newItem = {
         id: this.equipment.length + 1,
+        itemId: formData.itemId,
         image: this.imagePreview ? (this.imagePreview as string) : 'assets/images/camera.jpg', 
         name: formData.equipmentName,
         category: formData.category,
+        brand: formData.brand,
+        model: formData.model,
         serialNo: formData.serialNumber,
         condition: formData.condition,
-        status: formData.status
+        status: formData.status,
+        notes: formData.notes
       };
 
       
@@ -215,11 +242,53 @@ export class Inventory {
       this.equipmentForm.markAllAsTouched();
     }
   }
+
+  onEditFileChange(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.selectedItem.image = reader.result; 
+      };
+      reader.readAsDataURL(file);
+    }          
+  }
+
   
 
+  viewItem(item: any) {
+    this.selectedItem = item;
+    this.showViewModal = true;
+  }
 
+  closeViewModal() {
+    this.showViewModal = false;
+    this.selectedItem = null;
+    
+  }
+
+
+  updateItem() {
+
+    const index = this.equipment.findIndex(
+      x => x.id === this.selectedItem.id
+    );
+
+    if (index !== -1) {
+      this.equipment[index] = { ...this.selectedItem };
+    }
+
+    this.closeEditModal();
+  }
+
+  
+
+ 
 
 }
+
+
+
 
 
 

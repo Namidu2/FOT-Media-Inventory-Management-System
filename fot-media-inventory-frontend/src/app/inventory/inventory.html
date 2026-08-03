@@ -4,19 +4,12 @@
             <h1>Inventory Management</h1>
             <p>Manage all media equipment in the FOT Media Unit.</p>
         </div>
-        <button class="add-btn"  (click)="openAddModel()" >
+        <button type="button" class="add-btn" (click)="openAddModel()" >
             + Add Equipment
         </button>
     </div>
 
-    
-
     <div class="filters">
-        <input 
-        type="text"
-        placeholder="Search Equipment...."
-        [(ngModel)] = "searchText">
-
         <div class="custom-dropdown" (click)="isCategoryDropdownOpen = !isCategoryDropdownOpen" [class.dropdown-open]="isCategoryDropdownOpen">
             <div class="dropdown-header">
                 {{selectedCategory}}
@@ -83,7 +76,7 @@
                         class="item-image">
                     <div class="item-info">
                         <strong>{{item.name}}</strong>
-                        <span class="item-meta">INV-100{{item.id}} &middot; {{item.category}}</span>
+                        <span class="item-meta">{{item.itemId}} &middot; {{item.category}}</span>
                     </div>
                 </td>
 
@@ -113,19 +106,19 @@
 
                 <td class="actions">
 
-                    <button class="action-btn view-btn" title="View" (click)="viewItem(item)">
+                    <button type="button" class="action-btn view-btn" title="View" (click)="viewItem(item)">
                         <span class="material-symbols-outlined">
                             visibility
                         </span>
                     </button>
 
-                    <button class="action-btn edit-btn" title="Edit" (click)="editItem(item)">
+                    <button type="button" class="action-btn edit-btn" title="Edit" (click)="editItem(item)">
                         <span class="material-symbols-outlined">
                           edit
                         </span>
                     </button>
 
-                    <button class="action-btn delete-btn" title="Delete" (click)="deleteItem(item)">
+                    <button type="button" class="action-btn delete-btn" title="Delete" (click)="deleteItem(item)">
                         <span class="material-symbols-outlined">
                             delete
                         </span>
@@ -143,101 +136,582 @@
 
     </table>
 
-    <div class="modal-backdrop" *ngIf="showAddModal">
+    <!-- Edit Equipment Modal -->
+    <div class="modal-overlay" *ngIf="isEditModalOpen">
         <div class="modal">
+
             <div class="modal-header">
+
+                <div>
+                    <h2>Edit Equipment</h2>
+                    <p>Update equipment details.</p>
+                </div>
+
+                <button 
+                type="button" 
+                class="close-btn"
+                (click)="closeEditModal()">
+
+                    <span class="material-symbols-outlined">
+                        close
+                    </span>
+
+                </button>
+
+            </div>
+
+
+            <div class="form-grid">
+
+
+                <!--Item ID-->
+                <div class="form-group">
+
+                    <label>Item ID</label>
+
+                    <input 
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="selectedItem.itemId"
+                    readonly>
+
+                </div>
+
+
+
+                <!-- Equipment Name -->
+                <div class="form-group">
+
+                    <label>Equipment Name</label>
+
+                    <input 
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="selectedItem.name">
+
+                </div>
+
+
+
+                <!-- Category -->
+                <div class="form-group">
+
+                    <label>Category</label>
+
+                    <select 
+                    class="form-control"
+                    [(ngModel)]="selectedItem.category">
+
+                        <option 
+                        *ngFor="let cat of categories">
+                            {{cat}}
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+
+                <!-- Brand -->
+                <div class="form-group">
+
+                    <label>Brand</label>
+
+                    <input 
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="selectedItem.brand">
+
+                </div>
+
+
+
+
+
+                <!-- Model -->
+                <div class="form-group">
+
+                    <label>Model</label>
+
+                    <input 
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="selectedItem.model">
+
+                </div>
+
+
+
+
+
+                <!-- Serial Number -->
+                <div class="form-group">
+
+                    <label>Serial Number</label>
+
+                    <input 
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="selectedItem.serialNo">
+
+                </div>
+
+                <!-- Condition -->
+                <div class="form-group">
+
+                    <label>Condition</label>
+
+                    <select
+                    class="form-control"
+                    [(ngModel)]="selectedItem.condition">
+
+                        <option value="Excellent">Excellent</option>
+                        <option value="Good">Good</option>
+                        <option value="Fair">Fair</option>
+                        <option value="Poor">Poor</option>
+
+                    </select>
+
+                </div>
+
+                
+
+
+                <!-- Status -->
+                <div class="form-group">
+
+                    <label>Status</label>
+
+                    <select
+                    class="form-control"
+                    [(ngModel)]="selectedItem.status">
+
+                        <option 
+                        *ngFor="let stat of statuses">
+                            {{stat}}
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Notes -->
+                <div class="form-group full-width"> 
+
+                    <label>Notes</label>
+
+                    <textarea 
+                    class="form-control"
+                    [(ngModel)]="selectedItem.notes">
+                    </textarea>
+                </div>
+
+                <!-- Image -->
+                <div class="form-group full-width">
+
+                    <label>Equipment Image</label>
+
+                    <div class="upload-area">
+                        <!--Current Image-->
+                        <div class="image-thumbnail" *ngIf="selectedItem.image">
+                            <img [src]="selectedItem.image" alt="Equipment Image">
+                        </div>
+
+                        <!--Upload Button-->
+                        <div class="upload-box" (click)="editFileInput.click()">
+                            <input
+                                #editFileInput
+                                type="file"
+                                accept="image/*"
+                                hidden
+                                (change)="onEditFileChange($event)">
+
+                                <span class="material-symbols-outlined">
+                                upload
+                                </span>
+                            <p>Click to upload a new image</p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            
+
+                
+            </div>
+
+            <div class="modal-footer">
+
+
+                <button
+                    type="button"
+                    class="btn-cancel"
+                    (click)="closeEditModal()">
+
+                    Cancel
+
+                </button>
+
+
+
+                <button
+                type="submit"
+                class="btn-submit">
+                    
+
+                    Save Changes
+
+                </button>
+
+
+            </div>
+
+                
+            
+
+
+
+        </div>
+
+
+
+        
+
+
+    </div>
+    
+    
+    <!--Add Equipment Modal-->
+    
+    <div class="modal-backdrop" *ngIf="showAddModal">
+
+        <div class="modal">
+
+            <div class="modal-header">
+
                 <div>
                     <h2>Add New Equipment</h2>
-                    <p>Fill in the equipment details. Fields marked * are required.</p>
+                    <p>Fill in equipment details.</p>
                 </div>
-                <button type="button" class="close-btn" (click)="closeAddModel()">
+
+                <button 
+                    type="button"
+                    class="close-btn"
+                    (click)="closeAddModel()">
+
+                    <span class="material-symbols-outlined">
+                        close
+                    </span>
+
+                </button>
+            </div>
+
+        
+
+
+            <form [formGroup]="equipmentForm" (ngSubmit)="onSubmit()">
+
+
+                <div class="form-grid">
+
+
+                    <div class="form-group">
+                        <label>Item ID</label>
+
+                        <input 
+                        type="text"
+                        class="form-control"
+                        formControlName="itemId">
+                    </div>
+
+
+
+                    <div class="form-group">
+
+                        <label>Equipment Name</label>
+
+                        <input 
+                        type="text"
+                        class="form-control"
+                        formControlName="equipmentName">
+
+                    </div>
+
+
+
+                    <div class="form-group">
+
+                        <label>Category</label>
+
+                        <select 
+                        class="form-control"
+                        formControlName="category">
+
+                            <option 
+                            *ngFor="let cat of categories">
+                                {{cat}}
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+
+
+                    <div class="form-group">
+
+                        <label>Brand</label>
+
+                        <input
+                        type="text"
+                        class="form-control"
+                        formControlName="brand">
+
+                    </div>
+
+
+
+                    <div class="form-group">
+
+                        <label>Model</label>
+
+                        <input
+                        type="text"
+                        class="form-control"
+                        formControlName="model">
+
+                    </div>
+
+
+
+
+                    <div class="form-group">
+
+                        <label>Serial Number</label>
+
+                        <input
+                        type="text"
+                        class="form-control"
+                        formControlName="serialNumber">
+
+                    </div>
+
+
+
+
+                    <div class="form-group">
+
+                        <label>Condition</label>
+
+                        <select 
+                        class="form-control"
+                        formControlName="condition">
+
+                            <option>Excellent</option>
+                            <option>Good</option>
+                            <option>Fair</option>
+                            <option>Poor</option>
+
+                        </select>
+
+                    </div>
+
+
+
+
+                    <div class="form-group">
+
+                        <label>Status</label>
+
+                        <select 
+                        class="form-control"
+                        formControlName="status">
+
+                            <option 
+                            *ngFor="let stat of statuses">
+                                {{stat}}
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+
+                    <div class="form-group full-width">
+
+                        <label>Notes</label>
+
+                        <textarea
+                        class="form-control"
+                        formControlName="notes">
+                        </textarea>
+
+                    </div>
+
+
+                </div>
+
+            <div class="form-group full-width">
+
+                    <label>Equipment Image</label>
+
+                    <div class="upload-area">
+
+                        <div 
+                        class="image-thumbnail"
+                        *ngIf="imagePreview">
+
+                            <img 
+                            [src]="imagePreview"
+                            alt="Preview">
+
+                        </div>
+
+                        <div 
+                        class="image-thumbnail placeholder"
+                        *ngIf="!imagePreview">
+
+                        </div>
+
+                        <div 
+                            class="upload-box"
+                            (click)="fileInput.click()">
+
+                            <input
+                            #fileInput
+                            type="file"
+                            hidden
+                            accept="image/*"
+                            (change)="onFileChange($event)">
+
+                            <span class="material-symbols-outlined">
+                                upload
+                            </span>
+
+                            <p>
+                                Click to upload image
+                            </p>
+
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+                <div class="modal-footer">
+
+
+                    <button
+                    type="button"
+                    class="btn-cancel"
+                    (click)="closeAddModel()">
+
+                        Cancel
+
+                    </button>
+
+
+
+                    <button
+                    type="submit"
+                    class="btn-submit">
+                    
+
+                        Add Item
+
+                    </button>
+
+
+                </div>
+            </form>  
+        </div>  
+    </div>
+
+    
+
+
+          
+
+    <div class="modal-overlay" *ngIf="showViewModal">
+        <div class="view-modal">
+            <!-- Modal Header -->
+            <div class="modal-header">
+
+                
+                <h2>Equipment Details</h2>
+                
+                
+                <button type="button" class="close-btn" (click)="closeViewModal()">
                     <span class="material-symbols-outlined">
                         close
                     </span>
                 </button>
             </div>
 
-            <form [formGroup]="equipmentForm" (ngSubmit)="onSubmit()">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Item ID</label>
-                        <input type="text" formControlName="itemId" class="form-control" readonly>
-                    </div>
+            <!--Image-->
+            <div class="equipment-image">
+                <img [src]="selectedItem?.image" alt="Equipment Image">
+            </div>
 
-                    <div class="form-group">
-                        <label>Equipment Name <span class="text-danger">*</span></label>
-                        <input type="text" formControlName="equipmentName" class="form-control"
-                            [class.is-invalid]="equipmentForm.get('equipmentName')?.invalid && equipmentForm.get('equipmentName')?.touched">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Category</label>
-                        <select formControlName="category" class="form-control">
-                            <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Brand</label>
-                        <input type="text" formControlName="brand" class="form-control">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Model</label>
-                        <input type="text" formControlName="model" class="form-control">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Serial Number <span class="text-danger">*</span></label>
-                        <input type="text" formControlName="serialNumber" class="form-control"
-                            [class.is-invalid]="equipmentForm.get('serialNumber')?.invalid && equipmentForm.get('serialNumber')?.touched">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Condition</label>
-                        <select formControlName="condition" class="form-control">
-                            <option value="Excellent">Excellent</option>
-                            <option value="Good">Good</option>
-                            <option value="Fair">Fair</option>
-                            <option value="Poor">Poor</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Status</label>
-                        <select formControlName="status" class="form-control">
-                            <option *ngFor="let stat of statuses" [value]="stat">{{ stat }}</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group full-width mt-3">
-                        <label>Notes</label>
-                        <textarea formControlName="notes" class="form-control" rows="3"></textarea>
-                    </div>
-
-                    <div class="form-group full-width mt-3">
-                        <label>Equipment Image</label>
-                        <div class="upload-area">
-                            <div class="image-thumbnail" *ngIf="imagePreview">
-                                <img [src]="imagePreview" alt="Preview">
-                            </div>
-                            <div class="image-thumbnail placeholder" *ngIf="!imagePreview"></div>
-                            <div class="upload-box" (click)="fileInput.click()">
-                                <input type="file" #fileInput (change)="onFileChange($event)" accept="image/*" hidden>
-                                <span class="material-symbols-outlined">
-                                    upload
-                                </span>
-                                <span>Click to upload image</span>
-                            </div>
-                        </div>
-                    </div>
+            <!-- Equipment Details -->
+            <div class="details-grid">
+                <div class="details">
+                    <label>Item ID:</label>
+                    <p>FOT{{selectedItem?.itemId}}</p>
                 </div>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn-cancel" (click)="closeAddModel()">Cancel</button>
-                    <button type="submit" class="btn-submit">Add Item</button>
+                <div class="details">
+                    <label>Name</label>
+                    <p>{{selectedItem?.name}}</p>
                 </div>
-            </form>
+                <div class="details">
+                    <label>Category</label>
+                    <p>{{selectedItem?.category}}</p>
+                </div>
+
+                <div class="details">
+                    <label>Brand</label>
+                    <p>{{selectedItem?.brand}}</p>
+                </div>
+
+                <div class="details">
+                    <label>Model</label>
+                    <p>{{selectedItem?.model}}</p>
+                </div>
+
+                <div class="details">
+                    <label>Serial Number</label>
+                    <p>{{selectedItem?.serialNo}}</p>
+                </div>
+
+                <div class="details">
+                    <label>Condition</label>
+                    <span class="badge">
+                        {{selectedItem?.condition}}
+                    </span>
+                </div>
+
+                <div class="details">
+                    <label>Status</label>
+                    <span class="badge">
+                        {{selectedItem?.status}}
+                    </span>
+                </div>
+                
+                <div class="details full-width">
+                    <label>Notes</label>
+                    <p>{{selectedItem?.notes}}</p>
+                </div>
+
+            </div>
+            
         </div>
     </div>
 </div>
